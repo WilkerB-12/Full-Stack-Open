@@ -17,14 +17,14 @@ const Statistics = (props) => {
   const positive = (props.good / total) * 100;
  if(total !==0){ 
   return (
-    <div>
+    <table>
       <Statistic text="good" value={props.good} />
       <Statistic text="neutral" value={props.neutral} />
       <Statistic text="good" value={props.bad} />
       <Statistic text="all" value={total} />
       <Statistic text="average" value={average.toFixed(2)} />
       <Statistic text="positive" value={positive.toFixed(2) + " %"} />
-    </div>
+    </table>
   );
 }
 else{ return( <p>No feedback given</p>)}
