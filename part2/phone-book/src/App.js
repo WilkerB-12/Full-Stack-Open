@@ -38,6 +38,7 @@ const App = () => {
         <ul>
           {persons.map((person,i)=> <Person key={i} person={person}></Person>)}
         </ul>
+        <p>git addEsto es una prueba</p>
     </div>
   )
 }
