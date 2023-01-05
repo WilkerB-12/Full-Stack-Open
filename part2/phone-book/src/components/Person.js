@@ -1,6 +1,18 @@
-const Person = ({ person }) => {
+const Person = ({ persons,filterName }) => { 
+  const personsToShow =
+    filterName === ""
+      ? persons
+      : persons.filter((person) =>
+          person.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+            ? person
+            : ""
+        );
     return (
-      <li>{person.name+' '+person.number}</li>
+      <ul>
+      {personsToShow.map((person, i) => (
+          <li>{person.name+' '+person.number}</li>
+      ))}
+    </ul>
     )
   }
   
