@@ -10,7 +10,7 @@ const Person = ({ persons,filterName }) => {
     return (
       <ul>
       {personsToShow.map((person, i) => (
-          <li>{person.name+' '+person.number}</li>
+          <li key={i}>{person.name+' '+person.number}</li>
       ))}
     </ul>
     )
