@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Person from "./components/Person";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import noteService from "./services/persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterName, setFilterName] = useState("");
+  const [notificationMessage,setNotificationMessage]=useState(null)
 
   const getPeople = () => {
     noteService.getAll().then((initialPersons) => setPersons(initialPersons));
@@ -52,7 +53,10 @@ const App = () => {
       ) {
         await noteService
         .update(personToUpdate.id, personObject)
-        .then(console.log(` `));
+        .then(()=>{setNotificationMessage(`The number of ${personToUpdate.name} was updated successfully`);
+        setTimeout(()=>{
+          setNotificationMessage(null)
+        },5000)});
         getPeople()
       }
     } else {
@@ -60,7 +64,11 @@ const App = () => {
         .create(personObject)
         .then((newPerson) => {
         console.log(newPerson);
-        setPersons(persons.concat(newPerson));
+        setPersons(persons.concat(newPerson))
+        setNotificationMessage(`User ${newPerson.name} was added successfully`);
+        setTimeout(()=>{
+          setNotificationMessage(null)
+        },5000)
       });
     }
     console.log("despues de promesa");
@@ -71,6 +79,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage}/>
       <Filter filterName={filterName} handleFilterName={handleFilterName} />
       <h2>add new person</h2>
       <PersonForm
