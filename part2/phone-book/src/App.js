@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios'
+import axios from "axios";
 import Person from "./components/Person";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
+import noteService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -10,15 +11,16 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filterName, setFilterName] = useState("");
 
-  useEffect(()=>{
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-      })
-  },[])
+  const getPeople = () => {
+    noteService.getAll().then((initialPersons) => setPersons(initialPersons));
+    console.log("peticion de todas las personas lista");
+  };
+
+  useEffect(() => {
+    console.log("effect");
+    getPeople();
+    console.log("promise fulfilled");
+  }, []);
 
   const handleNewName = (e) => {
     console.log(e.target.value);
@@ -35,19 +37,35 @@ const App = () => {
     setFilterName(e.target.value);
   };
 
-  const addName = (e) => {
+  const addName =async (e) => {
     e.preventDefault();
     const personObject = {
       name: newName,
       number: newNumber,
     };
     if (persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
+      const personToUpdate = persons.find((person) => person.name === newName);
+      if (
+        window.confirm(
+          `${personToUpdate.name} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        await noteService
+        .update(personToUpdate.id, personObject)
+        .then(console.log(` `));
+        getPeople()
+      }
     } else {
-      setPersons(persons.concat(personObject));
-      setNewName("");
-      setNewNumber("");
+      noteService
+        .create(personObject)
+        .then((newPerson) => {
+        console.log(newPerson);
+        setPersons(persons.concat(newPerson));
+      });
     }
+    console.log("despues de promesa");
+    setNewName("");
+    setNewNumber("");
   };
 
   return (
@@ -64,7 +82,11 @@ const App = () => {
       />
       <h2>Numbers</h2>
       <ul>
-        <Person persons={persons} filterName={filterName} />
+        <Person
+          persons={persons}
+          filterName={filterName}
+          getPeople={getPeople}
+        />
       </ul>
     </div>
   );

@@ -1,4 +1,6 @@
-const Person = ({ persons,filterName }) => { 
+import noteService from "../services/persons";
+
+const Person = ({ persons, filterName, getPeople }) => {
   const personsToShow =
     filterName === ""
       ? persons
@@ -7,13 +9,25 @@ const Person = ({ persons,filterName }) => {
             ? person
             : ""
         );
-    return (
-      <ul>
+
+  const handleClick = (id) => {
+    noteService.deleteP(id).then(getPeople());
+  };
+
+  return (
+    <ul>
       {personsToShow.map((person, i) => (
-          <li key={i}>{person.name+' '+person.number}</li>
+        <div key={person.id}>
+          <li>
+            {person.name + " " + person.number}
+            <button onClick={(e)=> {if(window.confirm(`Are you sure to delete ${person.name}?`)){
+               handleClick(person.id);
+            }}}>delete</button>
+          </li>
+        </div>
       ))}
     </ul>
-    )
-  }
-  
-  export default Person
+  );
+};
+
+export default Person;
