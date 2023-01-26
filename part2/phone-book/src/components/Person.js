@@ -10,8 +10,9 @@ const Person = ({ persons, filterName, getPeople }) => {
             : ""
         );
 
-  const handleClick = (id) => {
-    noteService.deleteP(id).then(getPeople());
+  const handleClick = async (id) => {
+    await noteService.deleteP(id).then();
+    getPeople()
   };
 
   return (
